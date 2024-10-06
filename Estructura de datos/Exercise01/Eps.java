@@ -3,6 +3,7 @@ package Exercise01;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,15 +31,17 @@ public class Eps extends JFrame {
     private JComboBox <String> afiliaciones; 
     private JComboBox <String> condiciones;
     private JButton button;
+    private JButton button2;
     private JTable table;
     private DefaultTableModel model;
     private Queue <Paciente> colaShift;
 
     public Eps() {
-        setSize(280, 500);
+        setSize(280, 420);
         setLocationRelativeTo(null);
         setTitle("Turnos - EPS");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        colaShift = new LinkedList<>(); 
         paneles();
         placeText();
         placeInformation();
@@ -127,7 +130,7 @@ public class Eps extends JFrame {
     private void placeButtons(){
         button = new JButton("Agregar paciente");
         button.setBackground(new Color(23, 32, 48));
-        button.setBounds(20, 230, 128, 30);
+        button.setBounds(12, 230, 124, 30);
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -135,7 +138,13 @@ public class Eps extends JFrame {
             }
             
         });
+
+        button2 = new JButton("Extender tiempo");
+        button2.setBackground(new Color(23, 32, 48));
+        button2.setBounds(138, 230, 121, 30);
+    
         panel.add(button);
+        panel.add(button2);
     }
 
     private void placeTable(){
@@ -148,7 +157,6 @@ public class Eps extends JFrame {
     }
 
     private void addShift(){
-        colaShift = new LinkedList<>();
         String nombre = screenNombre.getText();
         String afiliacion = (String) afiliaciones.getSelectedItem();
         String condicionEspecial = (String) condiciones.getSelectedItem();
@@ -176,5 +184,41 @@ public class Eps extends JFrame {
         screenEdad.setText("");
         afiliaciones.setSelectedIndex(-1);
         condiciones.setSelectedIndex(-1);
+
+        patientAttended();
+    }
+
+    private void patientAttended(){
+
+        Paciente paciente = colaShift.remove();
+        JDialog turnoDialog = new JDialog(this, "Atendiendo al Paciente", false);
+        turnoDialog.setBounds(770, 230, 240, 200);
+    
+        BackgroundPanel backgroundPanel = new BackgroundPanel("Estructura de datos/Images/DialogFondo.jpg");
+        backgroundPanel.setBackground(Color.WHITE);
+        backgroundPanel.setLayout(null);  
+
+        JLabel labelNombre = new JLabel("Nombre: " + paciente.getNombre());
+        labelNombre.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
+        labelNombre.setBounds(30, 10, 200, 20);
+
+        JLabel labelEdad = new JLabel("Edad: " + paciente.getEdad());
+        labelEdad.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
+        labelEdad.setBounds(30, 40, 200, 20);
+
+        JLabel labelAfiliacion = new JLabel("Afiliación: " + paciente.getAfiliacion());
+        labelAfiliacion.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
+        labelAfiliacion.setBounds(30, 70, 200, 20);
+
+        JLabel labelCondicion = new JLabel("Condición: " + paciente.getCondicion());
+        labelCondicion.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
+        labelCondicion.setBounds(30, 100, 200, 20);
+
+        turnoDialog.add(backgroundPanel);
+        backgroundPanel.add(labelNombre);
+        backgroundPanel.add(labelEdad);
+        backgroundPanel.add(labelAfiliacion);
+        backgroundPanel.add(labelCondicion);
+        turnoDialog.setVisible(true);
     }
 }

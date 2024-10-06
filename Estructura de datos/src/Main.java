@@ -20,6 +20,8 @@ public class Main {
         UIManager.put("Component.arrowType", "chevron");
         UIManager.put("ScrollBar.showButtons", true );
         UIManager.put("OptionPane.background", Color.WHITE);
+        UIManager.put("Table.background", Color.WHITE);
+        UIManager.put("Table.foreground", Color.BLACK);
         
         SwingUtilities.updateComponentTreeUI(aplication);
         aplication.setVisible(true);

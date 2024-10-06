@@ -1,0 +1,6 @@
+{
+    "java.project.referencedLibraries": [
+        "Estructura de datos/Lib/flatlaf-3.5.1.jar",
+        "Estructura de datos/Lib/flatlaf-intellij-themes-3.5.1.jar"
+    ]
+}

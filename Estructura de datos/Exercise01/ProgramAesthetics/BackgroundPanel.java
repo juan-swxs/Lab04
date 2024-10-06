@@ -1,4 +1,5 @@
-package Exercise01;
+package Exercise01.ProgramAesthetics;
+
 import java.awt.Graphics;
 import java.awt.Image;
 import javax.swing.ImageIcon;

@@ -30,4 +30,20 @@ public class Paciente {
         return condicion; 
     }
 
+    public int calcularPrioridad() {
+        if (condicion.equals("Embarazo")) {
+            return 4;
+        }
+        if (edad < 12 || edad >= 60) {
+            return 3;
+        }
+        if (condicion.equals("Limitacion motriz")) {
+            return 2;
+        }
+        if (afiliacion.equals("PC")) {
+            return 1;
+        }
+        return 0;
+    }
+
 }

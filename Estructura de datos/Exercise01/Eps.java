@@ -20,8 +20,8 @@ import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Arrays;
+import java.util.PriorityQueue;
 import javax.swing.Timer;
 
 public class Eps extends JFrame {
@@ -41,9 +41,9 @@ public class Eps extends JFrame {
     private Timer timer;
     private JDialog turnoDialog;
     private DefaultTableModel model;
-    private Queue<Paciente> colaShift;
+    private PriorityQueue<Paciente> colaShift;
     private Paciente paciente;
-    private int segundos = 10;
+    private int segundos = 20;
     private int turno = 1;
 
     public Eps() {
@@ -52,7 +52,7 @@ public class Eps extends JFrame {
         setTitle("Turnos - EPS");
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        colaShift = new LinkedList<>();
+        colaShift = new PriorityQueue<>((p1, p2) -> Integer.compare(p2.calcularPrioridad(), p1.calcularPrioridad()));
         mainPanel();
         placeText();
         placeInformation();
@@ -127,7 +127,7 @@ public class Eps extends JFrame {
         afiliaciones.setBounds(17, 190, 100, 27);
         afiliaciones.setSelectedIndex(-1);
 
-        condiciones = new JComboBox<>(new String[] { "Embarazo", "Limitacion motriz" });
+        condiciones = new JComboBox<>(new String[] { "Ninguna", "Embarazo", "Limitacion motriz" });
         condiciones.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
         condiciones.setBounds(130, 190, 120, 27);
         condiciones.setSelectedIndex(-1);
@@ -189,6 +189,10 @@ public class Eps extends JFrame {
 
         try {
             edad = Integer.parseInt(screenEdad.getText());
+            if (edad < 1 || edad > 110) {
+                JOptionPane.showMessageDialog(this, "Por favor ingresa una edad válida (1-110).",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Edad no válida. Por favor, ingresa un número.",
                     "Error", JOptionPane.ERROR_MESSAGE);
@@ -198,7 +202,8 @@ public class Eps extends JFrame {
         Paciente patients = new Paciente(nombre, edad, afiliacion, condicionEspecial);
         colaShift.offer(patients);
 
-        model.addRow(new Object[] { nombre, edad, afiliacion, condicionEspecial });
+        updateTable();
+
         screenNombre.setText("");
         screenEdad.setText("");
         afiliaciones.setSelectedIndex(-1);
@@ -206,6 +211,19 @@ public class Eps extends JFrame {
 
         if (turnoDialog == null || !turnoDialog.isVisible()) {
             patientAttended();
+        }
+    }
+
+    private void updateTable() {
+        model.setRowCount(0);
+
+        Paciente[] pacientesArray = colaShift.toArray(new Paciente[0]);
+
+        Arrays.sort(pacientesArray, (p1, p2) -> Integer.compare(p2.calcularPrioridad(), p1.calcularPrioridad()));
+
+        for (Paciente paciente : pacientesArray) {
+            model.addRow(new Object[] { paciente.getNombre(), paciente.getEdad(), paciente.getAfiliacion(),
+                    paciente.getCondicion() });
         }
     }
 
@@ -261,7 +279,7 @@ public class Eps extends JFrame {
         attend.setEditable(false);
         attend.setBounds(20, 160, 190, 24);
 
-        time = new JLabel("00:00:10");
+        time = new JLabel("00:00:20");
         time.setFont(new Font("Serif", Font.PLAIN, 15));
         time.setBounds(120, 120, 170, 50);
 

@@ -50,16 +50,17 @@ public class Eps extends JFrame {
         setSize(280, 420);
         setLocationRelativeTo(null);
         setTitle("Turnos - EPS");
+        setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         colaShift = new LinkedList<>();
-        paneles();
+        mainPanel();
         placeText();
         placeInformation();
         placeButtons();
         placeTable();
     }
 
-    private void paneles() {
+    private void mainPanel() {
         panel = new JPanel();
         panel.setBackground(Color.WHITE);
         panel.setLayout(null);
@@ -154,7 +155,7 @@ public class Eps extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 extendTime();
-            } 
+            }
         });
 
         panel.add(button);
@@ -211,9 +212,14 @@ public class Eps extends JFrame {
     private void patientAttended() {
         if (colaShift.isEmpty()) {
             JOptionPane.showMessageDialog(null, "No hay pacientes en espera.",
-                    "Cola Completa", JOptionPane.OK_OPTION);
+                    "Cola Completa", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+
+        if (!colaShift.isEmpty()) {
+            model.removeRow(0);
+        }
+
         paciente = colaShift.poll();
 
         if (turnoDialog != null) {
@@ -221,7 +227,8 @@ public class Eps extends JFrame {
         }
 
         turnoDialog = new JDialog(this, "Atención al paciente", false);
-        turnoDialog.setBounds(770, 120, 237, 240);
+        turnoDialog.setResizable(false);
+        turnoDialog.setBounds(770, 180, 237, 240);
 
         BackgroundPanel backgroundPanel = new BackgroundPanel("Images/DialogFondo.png");
         backgroundPanel.setBackground(Color.WHITE);
@@ -245,18 +252,18 @@ public class Eps extends JFrame {
 
         JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
         separator.setBounds(15, 127, 190, 120);
-        
+
         JLabel Turno = new JLabel("Turno: " + turno);
         Turno.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
-        Turno.setBounds(37, 130, 180, 30);
+        Turno.setBounds(39, 128, 180, 30);
 
         attend = new JTextField();
-        attend.setEditable(false); 
+        attend.setEditable(false);
         attend.setBounds(20, 160, 190, 24);
 
         time = new JLabel("00:00:10");
         time.setFont(new Font("Serif", Font.PLAIN, 15));
-        time.setBounds(128, 121, 170, 50);
+        time.setBounds(120, 120, 170, 50);
 
         backgroundPanel.add(labelAttended);
         backgroundPanel.add(labelEdad);
@@ -272,30 +279,31 @@ public class Eps extends JFrame {
         if (timer != null) {
             timer.stop();
         }
-        
+
         if (segundos == 0) {
-            segundos = 10; 
+            segundos = 10;
         }
-        
+
         Timer timeUpdateTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (segundos > 0) {
-                    segundos--; 
-                    actualizeTime(); 
+                    segundos--;
+                    actualizeTime();
                 } else {
-                    timer.stop();; 
+                    timer.stop();
+                    ;
                 }
             }
         });
         timeUpdateTimer.start();
-        
+
         timer = new Timer(segundos * 1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 attend.setText("Turno atendido: " + paciente.getNombre());
-        
-                Timer closeTimer = new Timer(1000, new ActionListener() {
+
+                Timer closeTimer = new Timer(800, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         turnoDialog.dispose();
@@ -304,7 +312,7 @@ public class Eps extends JFrame {
                         }
                         segundos = 10;
                         actualizeTime();
-        
+
                         if (!colaShift.isEmpty()) {
                             turno++;
                         } else {
@@ -317,28 +325,33 @@ public class Eps extends JFrame {
                 closeTimer.start();
             }
         });
-        
+
         timer.setRepeats(false);
         timer.start();
-        }
-        
-        private void actualizeTime() {
-            int horas = segundos / 3600;
-            int minutes = (segundos % 3600) / 60;
-            int remainingSeconds = segundos % 60;
-        
-            String timeFormatted = String.format("%02d:%02d:%02d", horas, minutes, remainingSeconds);
-            time.setText(timeFormatted); 
-        }
-        
-        private void extendTime() {
-            if (segundos > 0) {
-                segundos += 5; 
-                actualizeTime();
+    }
 
-                timer.setInitialDelay(segundos * 1000);
-                timer.restart();
-            }
-        } 
-    
+    private void actualizeTime() {
+        int horas = segundos / 3600;
+        int minutes = (segundos % 3600) / 60;
+        int remainingSeconds = segundos % 60;
+
+        String timeFormatted = String.format("%02d:%02d:%02d", horas, minutes, remainingSeconds);
+        time.setText(timeFormatted);
+    }
+
+    private void extendTime() {
+        if (timer != null && timer.isRunning()) {
+            segundos += 5;
+            actualizeTime();
+
+            timer.setInitialDelay(segundos * 1000);
+            timer.restart();
+
+        } else {
+            JOptionPane.showMessageDialog(null,
+                    "El tiempo de atencion aún no ha comenzado. Por favor, ingresa un paciente para extender el tiempo.",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
 }

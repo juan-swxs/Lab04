@@ -307,7 +307,17 @@ public class Eps extends JFrame {
         int minutos = (segundos % 3600) / 60;
         int seg = segundos % 60;
 
-        String tiempoFormat = String.format("%02d:%02d:%02d", horas, minutos, seg);
-        time.setText(tiempoFormat);
+            String timeFormatted = String.format("%02d:%02d", minutes, remainingSeconds);
+            time.setText(timeFormatted); 
+        }
+        
+ 
+        private void extendTime() {
+            if (segundos > 0) {
+                segundos += 5; 
+                actualizeTime();
+        
+                timer.setInitialDelay(segundos * 1000);
+                timer.restart();
     }
 }

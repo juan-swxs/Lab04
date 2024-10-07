@@ -29,6 +29,7 @@ public class Eps extends JFrame {
     private JPanel panel;
     private JTextField screenNombre;
     private JTextField screenEdad;
+    private JTextField attend;
     private ImageIcon conteinImage;
     private JLabel animationJLabel;
     private JLabel time;
@@ -41,6 +42,7 @@ public class Eps extends JFrame {
     private JDialog turnoDialog;
     private DefaultTableModel model;
     private Queue<Paciente> colaShift;
+    private Paciente paciente;
     private int segundos = 10;
     private int turno = 1;
 
@@ -148,6 +150,12 @@ public class Eps extends JFrame {
 
         button2 = new JButton("Extender tiempo");
         button2.setBounds(135, 234, 121, 30);
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                extendTime();
+            } 
+        });
 
         panel.add(button);
         panel.add(button2);
@@ -206,7 +214,7 @@ public class Eps extends JFrame {
                     "Cola Completa", JOptionPane.OK_OPTION);
             return;
         }
-        Paciente paciente = colaShift.poll();
+        paciente = colaShift.poll();
 
         if (turnoDialog != null) {
             turnoDialog.dispose();
@@ -242,7 +250,7 @@ public class Eps extends JFrame {
         Turno.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
         Turno.setBounds(37, 130, 180, 30);
 
-        JTextField attend = new JTextField();
+        attend = new JTextField();
         attend.setEditable(false); 
         attend.setBounds(20, 160, 190, 24);
 
@@ -261,33 +269,45 @@ public class Eps extends JFrame {
         turnoDialog.add(backgroundPanel);
         turnoDialog.setVisible(true);
 
+        if (timer != null) {
+            timer.stop();
+        }
+        
+        if (segundos == 0) {
+            segundos = 10; 
+        }
+        
         Timer timeUpdateTimer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                segundos--;
-                actualizeTime();
+                if (segundos > 0) {
+                    segundos--; 
+                    actualizeTime(); 
+                } else {
+                    timer.stop();; 
+                }
             }
         });
         timeUpdateTimer.start();
-
-        timer = new Timer(10000, new ActionListener() {
+        
+        timer = new Timer(segundos * 1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 attend.setText("Turno atendido: " + paciente.getNombre());
-
+        
                 Timer closeTimer = new Timer(1000, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         turnoDialog.dispose();
-                        if(timeUpdateTimer != null){
+                        if (timeUpdateTimer != null) {
                             timeUpdateTimer.stop();
                         }
                         segundos = 10;
                         actualizeTime();
-                        
-                        if(!colaShift.isEmpty()){
+        
+                        if (!colaShift.isEmpty()) {
                             turno++;
-                        }else{
+                        } else {
                             turno = 1;
                         }
                         patientAttended();
@@ -297,27 +317,28 @@ public class Eps extends JFrame {
                 closeTimer.start();
             }
         });
-
+        
         timer.setRepeats(false);
         timer.start();
-    }
-
-    private void actualizeTime(){
-        int horas = segundos / 3600;
-        int minutos = (segundos % 3600) / 60;
-        int seg = segundos % 60;
-
-            String timeFormatted = String.format("%02d:%02d", minutes, remainingSeconds);
+        }
+        
+        private void actualizeTime() {
+            int horas = segundos / 3600;
+            int minutes = (segundos % 3600) / 60;
+            int remainingSeconds = segundos % 60;
+        
+            String timeFormatted = String.format("%02d:%02d:%02d", horas, minutes, remainingSeconds);
             time.setText(timeFormatted); 
         }
         
- 
         private void extendTime() {
             if (segundos > 0) {
                 segundos += 5; 
                 actualizeTime();
-        
+
                 timer.setInitialDelay(segundos * 1000);
                 timer.restart();
-    }
+            }
+        } 
+    
 }

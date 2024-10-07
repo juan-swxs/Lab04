@@ -15,7 +15,7 @@ public class CustomCellRenderer extends JLabel implements TableCellRenderer {
         if (row % 2 == 0) { 
             setBackground(Color.WHITE); 
         } else {
-            setBackground(new Color(104, 132, 183)); 
+            setBackground(new Color(176, 190, 217)); 
         }
 
         setOpaque(true);

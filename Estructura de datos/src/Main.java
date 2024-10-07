@@ -27,7 +27,8 @@ public class Main {
         UIManager.put("OptionPane.messageForeground", Color.WHITE);
         UIManager.put("Table.background", Color.WHITE);
         UIManager.put("Table.foreground", Color.BLACK);
-        UIManager.put("TextArea.foreground", Color.WHITE);
+        UIManager.put("TextArea.background", new Color(213,213,213));
+        UIManager.put("TextArea.foreground", Color.BLACK);
         
         SwingUtilities.updateComponentTreeUI(aplication);
         aplication.setVisible(true);

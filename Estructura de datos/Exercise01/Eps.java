@@ -12,11 +12,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -32,15 +31,18 @@ public class Eps extends JFrame {
     private JTextField screenEdad;
     private ImageIcon conteinImage;
     private JLabel animationJLabel;
-    private JComboBox <String> afiliaciones;
-    private JComboBox <String> condiciones;
+    private JLabel time;
+    private JComboBox<String> afiliaciones;
+    private JComboBox<String> condiciones;
     private JButton button;
     private JButton button2;
     private JTable table;
     private Timer timer;
     private JDialog turnoDialog;
     private DefaultTableModel model;
-    private Queue <Paciente> colaShift;
+    private Queue<Paciente> colaShift;
+    private int segundos = 10;
+    private int turno = 1;
 
     public Eps() {
         setSize(280, 420);
@@ -63,7 +65,7 @@ public class Eps extends JFrame {
     }
 
     private void placeText() {
-        conteinImage = new ImageIcon("Estructura de datos/Images/Timer.jpg");
+        conteinImage = new ImageIcon("Images/Timer.jpg");
         Image imagen = conteinImage.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
 
         animationJLabel = new JLabel(new ImageIcon(imagen));
@@ -200,8 +202,8 @@ public class Eps extends JFrame {
 
     private void patientAttended() {
         if (colaShift.isEmpty()) {
-            JOptionPane.showMessageDialog(null,"No hay pacientes en espera.",
-                "Informacion",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "No hay pacientes en espera.",
+                    "Cola Completa", JOptionPane.OK_OPTION);
             return;
         }
         Paciente paciente = colaShift.poll();
@@ -211,13 +213,13 @@ public class Eps extends JFrame {
         }
 
         turnoDialog = new JDialog(this, "Atención al paciente", false);
-        turnoDialog.setBounds(770, 230, 240, 200);
+        turnoDialog.setBounds(770, 120, 237, 240);
 
-        BackgroundPanel backgroundPanel = new BackgroundPanel("Images/DialogFondo.jpg");
+        BackgroundPanel backgroundPanel = new BackgroundPanel("Images/DialogFondo.png");
         backgroundPanel.setBackground(Color.WHITE);
         backgroundPanel.setLayout(null);
 
-        JLabel labelAttended = new JLabel("Atendiendo al paciente: " + paciente.getNombre());
+        JLabel labelAttended = new JLabel("Nombre: " + paciente.getNombre());
         labelAttended.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
         labelAttended.setBounds(30, 10, 200, 20);
 
@@ -233,40 +235,79 @@ public class Eps extends JFrame {
         labelCondicion.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
         labelCondicion.setBounds(30, 100, 200, 20);
 
-        JSeparator separator = new JSeparator();
-        separator.setPreferredSize(new Dimension(200, 2));
+        JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
+        separator.setBounds(15, 127, 190, 120);
+        
+        JLabel Turno = new JLabel("Turno: " + turno);
+        Turno.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
+        Turno.setBounds(37, 130, 180, 30);
 
-        JTextArea attend = new JTextArea();
-        attend.setBorder(null);
-        attend.setBounds(30, 130, 170, 30);
+        JTextField attend = new JTextField();
+        attend.setEditable(false); 
+        attend.setBounds(20, 160, 190, 24);
+
+        time = new JLabel("00:00:10");
+        time.setFont(new Font("Serif", Font.PLAIN, 15));
+        time.setBounds(128, 121, 170, 50);
 
         backgroundPanel.add(labelAttended);
         backgroundPanel.add(labelEdad);
         backgroundPanel.add(labelAfiliacion);
         backgroundPanel.add(labelCondicion);
         backgroundPanel.add(separator);
+        backgroundPanel.add(Turno);
+        backgroundPanel.add(time);
         backgroundPanel.add(attend);
-
         turnoDialog.add(backgroundPanel);
         turnoDialog.setVisible(true);
+
+        Timer timeUpdateTimer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                segundos--;
+                actualizeTime();
+            }
+        });
+        timeUpdateTimer.start();
 
         timer = new Timer(10000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                attend.append("Turno atendido: " + paciente.getNombre());
+                attend.setText("Turno atendido: " + paciente.getNombre());
 
-                Timer closeTimer = new Timer(3000, new ActionListener() {
+                Timer closeTimer = new Timer(1000, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         turnoDialog.dispose();
+                        if(timeUpdateTimer != null){
+                            timeUpdateTimer.stop();
+                        }
+                        segundos = 10;
+                        actualizeTime();
+                        
+                        if(!colaShift.isEmpty()){
+                            turno++;
+                        }else{
+                            turno = 1;
+                        }
                         patientAttended();
                     }
                 });
                 closeTimer.setRepeats(false);
-                closeTimer.start(); 
+                closeTimer.start();
             }
         });
+
         timer.setRepeats(false);
         timer.start();
+    }
+
+    private void actualizeTime(){
+        int horas = segundos / 3600;
+        int minutos = (segundos % 3600) / 60;
+        int seg = segundos % 60;
+
+        String tiempoFormat = String.format("%02d:%02d:%02d", horas, minutos, seg);
+        time.setText(tiempoFormat);
     }
 }

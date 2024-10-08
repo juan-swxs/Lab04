@@ -69,14 +69,14 @@ public class Eps extends JFrame {
 
     private void placeText() {
         conteinImage = new ImageIcon("Images/Timer.png");
-        Image imagen = conteinImage.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        Image imagen = conteinImage.getImage().getScaledInstance(32, 32, Image.SCALE_SMOOTH);
 
         animationJLabel = new JLabel(new ImageIcon(imagen));
-        animationJLabel.setBounds(19, 18, 40, 40);
+        animationJLabel.setBounds(19, 20, 32, 32);
 
         JLabel title = new JLabel("Pedidos");
         title.setFont(new Font("serif", Font.ITALIC, 20));
-        title.setBounds(70, 26, 100, 20);
+        title.setBounds(60, 26, 100, 20);
 
         JLabel subTitle = new JLabel("Complete el siguiente formulario para asignar un turno");
         subTitle.setFont(new Font("serif", Font.ROMAN_BASELINE, 10));
@@ -247,51 +247,60 @@ public class Eps extends JFrame {
 
         turnoDialog = new JDialog(this, "Atención al paciente", false);
         turnoDialog.setResizable(false);
-        turnoDialog.setBounds(770, 180, 237, 240);
+        turnoDialog.setBounds(770, 230, 237, 257);
 
         BackgroundPanel backgroundPanel = new BackgroundPanel("Images/DialogFondo.png");
         backgroundPanel.setBackground(Color.WHITE);
         backgroundPanel.setLayout(null);
 
-        JLabel labelAttended = new JLabel("Nombre: " + paciente.getNombre());
+        RoundedPanel subPanel = new RoundedPanel();
+        subPanel.setBackground(new Color(0,0,0,30));
+        subPanel.setRounded(40, 40);
+        subPanel.setBounds(16, 10, 190,130); 
+        subPanel.setLayout(null);
+
+        JLabel labelAttended = new JLabel("Nombre: " + paciente.getNombre().toLowerCase());
         labelAttended.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
-        labelAttended.setBounds(30, 10, 200, 20);
+        labelAttended.setBounds(9, 10, 200, 20);
 
         JLabel labelEdad = new JLabel("Edad: " + paciente.getEdad());
         labelEdad.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
-        labelEdad.setBounds(30, 40, 200, 20);
+        labelEdad.setBounds(9, 40, 200, 20);
 
         JLabel labelAfiliacion = new JLabel("Afiliación: " + paciente.getAfiliacion());
         labelAfiliacion.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
-        labelAfiliacion.setBounds(30, 70, 200, 20);
+        labelAfiliacion.setBounds(9, 70, 200, 20);
 
         JLabel labelCondicion = new JLabel("Condición: " + paciente.getCondicion());
         labelCondicion.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
-        labelCondicion.setBounds(30, 100, 200, 20);
+        labelCondicion.setBounds(9, 100, 200, 20);
 
         JSeparator separator = new JSeparator(SwingConstants.HORIZONTAL);
-        separator.setBounds(15, 127, 190, 120);
+        separator.setBounds(15, 146, 190, 120);
 
         JLabel Turno = new JLabel("Turno: " + turno);
         Turno.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
-        Turno.setBounds(39, 128, 180, 30);
+        Turno.setBounds(39, 147, 180, 30);
 
         attend = new JTextField();
         attend.setEditable(false);
-        attend.setBounds(20, 160, 190, 24);
+        attend.setFont(new Font("serif", Font.ROMAN_BASELINE, 12));
+        attend.setBounds(20, 179, 190, 24);
 
         time = new JLabel("00:00:10");
         time.setFont(new Font("Serif", Font.PLAIN, 15));
-        time.setBounds(120, 120, 170, 50);
-
-        backgroundPanel.add(labelAttended);
-        backgroundPanel.add(labelEdad);
-        backgroundPanel.add(labelAfiliacion);
-        backgroundPanel.add(labelCondicion);
+        time.setBounds(120, 138, 170, 50);
+       
+        subPanel.add(labelAttended);
+        subPanel.add(labelEdad);
+        subPanel.add(labelAfiliacion);
+        subPanel.add(labelCondicion);
         backgroundPanel.add(separator);
         backgroundPanel.add(Turno);
         backgroundPanel.add(time);
         backgroundPanel.add(attend);
+        backgroundPanel.add(subPanel);
+
         turnoDialog.add(backgroundPanel);
         turnoDialog.setVisible(true);
 
@@ -311,7 +320,6 @@ public class Eps extends JFrame {
                     actualizeTime();
                 } else {
                     timer.stop();
-                    ;
                 }
             }
         });

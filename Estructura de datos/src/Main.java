@@ -54,6 +54,7 @@ public class Main {
                             Eps aplication = new Eps();
                             FlatCarbonIJTheme.setup();
                             UIManager.put("TextComponent.arc", 999);
+                            UIManager.put("Panel.arc", 999);
                             UIManager.put("Component.arc", 999);
                             UIManager.put("Component.focusWidth", 1 );
                             UIManager.put("Button.arc", 100);

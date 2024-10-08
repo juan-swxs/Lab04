@@ -43,7 +43,7 @@ public class Eps extends JFrame {
     private DefaultTableModel model;
     private PriorityQueue<Paciente> colaShift;
     private Paciente paciente;
-    private int segundos = 20;
+    private int segundos = 10;
     private int turno = 1;
 
     public Eps() {
@@ -68,15 +68,15 @@ public class Eps extends JFrame {
     }
 
     private void placeText() {
-        conteinImage = new ImageIcon("Images/Timer.jpg");
-        Image imagen = conteinImage.getImage().getScaledInstance(60, 60, Image.SCALE_SMOOTH);
+        conteinImage = new ImageIcon("Images/Timer.png");
+        Image imagen = conteinImage.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 
         animationJLabel = new JLabel(new ImageIcon(imagen));
-        animationJLabel.setBounds(17, 10, 60, 60);
+        animationJLabel.setBounds(19, 18, 40, 40);
 
         JLabel title = new JLabel("Pedidos");
         title.setFont(new Font("serif", Font.ITALIC, 20));
-        title.setBounds(76, 27, 100, 20);
+        title.setBounds(70, 26, 100, 20);
 
         JLabel subTitle = new JLabel("Complete el siguiente formulario para asignar un turno");
         subTitle.setFont(new Font("serif", Font.ROMAN_BASELINE, 10));
@@ -192,6 +192,7 @@ public class Eps extends JFrame {
             if (edad < 1 || edad > 110) {
                 JOptionPane.showMessageDialog(this, "Por favor ingresa una edad válida (1-110).",
                         "Error", JOptionPane.ERROR_MESSAGE);
+                return;
             }
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Edad no válida. Por favor, ingresa un número.",
@@ -279,7 +280,7 @@ public class Eps extends JFrame {
         attend.setEditable(false);
         attend.setBounds(20, 160, 190, 24);
 
-        time = new JLabel("00:00:20");
+        time = new JLabel("00:00:10");
         time.setFont(new Font("Serif", Font.PLAIN, 15));
         time.setBounds(120, 120, 170, 50);
 

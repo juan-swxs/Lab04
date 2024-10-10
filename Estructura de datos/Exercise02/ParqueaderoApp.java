@@ -8,9 +8,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
+import java.util.Stack;
+
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -122,29 +126,11 @@ public class ParqueaderoApp extends JFrame {
 
         });
 
-        tipoVehiculo = new JComboBox<>(new String[] {"Bicicleta", "Ciclomotores","Motocicletas","Carros"});
+        tipoVehiculo = new JComboBox<>(new String[] { "Bicicleta", "Ciclomotores", "Motocicletas", "Carros" });
         tipoVehiculo.setEditable(true);
         tipoVehiculo.setFont(new Font("arial", Font.TRUETYPE_FONT, 10));
-        tipoVehiculo.getEditor().setItem("Eliga el tipo de vehiculo");
+        tipoVehiculo.setSelectedItem("Eliga el tipo de vehiculo");
         tipoVehiculo.setBounds(30, 270, 200, 30);
-
-        tipoVehiculo.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (tipoVehiculo.getEditor().getItem().equals("Ingrese el tipo de vehiculo")) {
-                    tipoVehiculo.getEditor().setItem("");
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-
-                if (tipoVehiculo.getEditor().getItem().equals("")) {
-                    tipoVehiculo.getEditor().setItem("Ingrese el tipo de vehiculo");
-                }
-            }
-
-        });
 
         hora = new JTextField("Ingrese la hora 00:00");
         hora.setFont(new Font("arial", Font.TRUETYPE_FONT, 10));
@@ -208,7 +194,15 @@ public class ParqueaderoApp extends JFrame {
 
         });
         JMenuItem vehiculos2 = new JMenuItem("⚬ Vehiculos 2 ruedas");
+        vehiculos2.addActionListener(e -> {
+            TwoWheelsVehicles();
+        });
+
         JMenuItem vehiculos4 = new JMenuItem("⚬ Vehiculos 4 ruedas");
+        vehiculos4.addActionListener(e -> {
+            FourWheelsVehicles();
+        });
+
         JMenuItem parqueadero = new JMenuItem("⚬ Parqueadero");
         JMenuItem eliminar = new JMenuItem("⌫ Eliminar");
         JMenuItem salir = new JMenuItem("⛒ Salir");
@@ -226,7 +220,7 @@ public class ParqueaderoApp extends JFrame {
     }
 
     private void placeTabla() {
-        String[] columns = {"Placa", "Tipo", "Hora", "N° Vehiculo", "Valor"};
+        String[] columns = { "Placa", "Tipo", "Hora", "N° Vehiculo", "Valor" };
         tableModel = new DefaultTableModel(columns, 0);
         table = new JTable(tableModel);
 
@@ -240,7 +234,7 @@ public class ParqueaderoApp extends JFrame {
         String tipoVh = (String) tipoVehiculo.getSelectedItem();
         String horaEntrada = hora.getText();
 
-        if (placa.equals("Ingresar la placa") || tipoVh.equals("Ingrese el tipo de vehiculo")
+        if (placa.equals("Ingresar la placa") || tipoVehiculo.getSelectedIndex() == -1
                 || horaEntrada.equals("Ingrese la hora 00:00")) {
 
             JOptionPane.showMessageDialog(this, "Por favor complete todos los campos.",
@@ -255,6 +249,77 @@ public class ParqueaderoApp extends JFrame {
             JOptionPane.showMessageDialog(null, "Datos ingresados con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         }
 
-        tableModel.addRow(new Object[] {vehicle.getPlaca() ,vehicle.getTipo(), vehicle.getHora(), turno});
+        tableModel.addRow(new Object[] { vehicle.getPlaca(), vehicle.getTipo(), vehicle.getHora(), turno,
+                "$" + valueMinute(tipoVh) });
+    }
+
+    private void TwoWheelsVehicles() {
+        Stack<VehicleEntry> pilaVehiculos2Ruedas = new Stack<>();
+        DefaultListModel<String> modeloLista = new DefaultListModel<>();
+
+        for (VehicleEntry vehiculo : vehiculos) {
+            if (vehiculo.getTipo().equals("Bicicleta") || vehiculo.getTipo().equals("Motocicletas") || vehiculo.getTipo().equals("Ciclomotores")) {
+                pilaVehiculos2Ruedas.push(vehiculo);
+            }
+        }
+
+        if(pilaVehiculos2Ruedas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay vehículos de 2 ruedas.");
+            return;
+        }
+
+        while (!pilaVehiculos2Ruedas.isEmpty()) {
+            VehicleEntry vehiculo = pilaVehiculos2Ruedas.pop();
+            int valor = valueMinute(vehiculo.getTipo());
+            modeloLista.addElement("Placa: " + vehiculo.getPlaca() + " | Tipo: " + vehiculo.getTipo() + " | Valor: $" + valor);
+        }
+        mostrarListaVehiculos(modeloLista, "Vehículos de 2 Ruedas");
+    }
+
+    private void FourWheelsVehicles() {
+        Stack<VehicleEntry> pilaVehiculos4Ruedas = new Stack<>();
+        DefaultListModel<String> modeloLista = new DefaultListModel<>();
+    
+        for (VehicleEntry vehiculo : vehiculos) {
+            if (vehiculo.getTipo().equals("Carros")) {
+                pilaVehiculos4Ruedas.push(vehiculo);
+            }
+        }
+
+        if(pilaVehiculos4Ruedas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay vehículos de 4 ruedas.");
+            return;
+        }
+    
+        while (!pilaVehiculos4Ruedas.isEmpty()) {
+            VehicleEntry vehiculo = pilaVehiculos4Ruedas.pop();
+            int valor = valueMinute(vehiculo.getTipo());
+            modeloLista.addElement("Placa: " + vehiculo.getPlaca() + " | Tipo: " + vehiculo.getTipo() + " | Valor: $" + valor);
+        }
+    
+        mostrarListaVehiculos(modeloLista, "Vehículos de 4 Ruedas");
+    }
+
+    private void mostrarListaVehiculos(DefaultListModel<String> modeloLista, String titulo) {
+        JList<String> listaVehiculos = new JList<>(modeloLista);
+        JScrollPane scrollPane = new JScrollPane(listaVehiculos);
+
+        JOptionPane.showMessageDialog(this, scrollPane, titulo,
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private int valueMinute(String tipo) {
+        switch (tipo) {
+            case "Bicicleta":
+                return 20;
+            case "Ciclomotores":
+                return 20;
+            case "Motocicletas":
+                return 30;
+            case "Carros":
+                return 60;
+            default:
+                return 0;
+        }
     }
 }

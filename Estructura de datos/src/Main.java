@@ -94,6 +94,17 @@ public class Main {
                             UIManager.put("MenuBar.selectionArc", 10);
                             UIManager.put("MenuItem.selectionBackground",new Color(16,162,149,50));
                             UIManager.put("MenuItem.selectionArc", 10);
+                            UIManager.put("ComboBox.background",  new Color(0,168,118,160));
+                            UIManager.put("ComboBox.foreground", new Color(236,236,236,210));
+                            UIManager.put("ComboBox.borderWidth", 0);
+                            UIManager.put("ComboBox.buttonEditableBackground", new Color(2,79,99));
+                            UIManager.put("ComboBox.selectionBackground", new Color(4,166,151,50));
+                            UIManager.put("ComboBox.popupBackground", new Color(0, 30, 51));
+                            UIManager.put("Component.arrowType", "chevron");
+                            UIManager.put("Component.arc", 20);
+                            UIManager.put("List.selectionBackground", new Color(4,166,151,50));
+                            UIManager.put( "ScrollBar.showButtons", true );
+                            
                             SwingUtilities.updateComponentTreeUI(app);
                             app.setVisible(true);
                             break;

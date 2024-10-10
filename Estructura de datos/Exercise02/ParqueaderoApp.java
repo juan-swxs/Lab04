@@ -9,7 +9,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Stack;
-
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -47,6 +46,7 @@ public class ParqueaderoApp extends JFrame {
     private DefaultTableModel tableModel;
     private ArrayList<VehicleEntry> vehiculos;
     private int turno = 0;
+    private int park = 0;
 
     public ParqueaderoApp() {
         setSize(400, 550);
@@ -175,6 +175,7 @@ public class ParqueaderoApp extends JFrame {
     private void placeMenu() {
         menu = new JMenuBar();
         menuLeading = new JMenu("≡ Menu");
+
         JMenuItem ingresar = new JMenuItem(" ✒ Ingresar");
         ingresar.addActionListener(new ActionListener() {
 
@@ -184,6 +185,7 @@ public class ParqueaderoApp extends JFrame {
             }
 
         });
+
         JMenuItem tabla = new JMenuItem("⛯ Mostrar tabla");
         tabla.addActionListener(new ActionListener() {
 
@@ -193,6 +195,7 @@ public class ParqueaderoApp extends JFrame {
             }
 
         });
+
         JMenuItem vehiculos2 = new JMenuItem("⚬ Vehiculos 2 ruedas");
         vehiculos2.addActionListener(e -> {
             TwoWheelsVehicles();
@@ -204,7 +207,15 @@ public class ParqueaderoApp extends JFrame {
         });
 
         JMenuItem parqueadero = new JMenuItem("⚬ Parqueadero");
+        parqueadero.addActionListener(e -> {
+            parking();
+        });
+
         JMenuItem eliminar = new JMenuItem("⌫ Eliminar");
+        eliminar.addActionListener(e -> {
+            eliminateVehiculo();
+        });
+
         JMenuItem salir = new JMenuItem("⛒ Salir");
 
         menuLeading.add(ingresar);
@@ -258,12 +269,13 @@ public class ParqueaderoApp extends JFrame {
         DefaultListModel<String> modeloLista = new DefaultListModel<>();
 
         for (VehicleEntry vehiculo : vehiculos) {
-            if (vehiculo.getTipo().equals("Bicicleta") || vehiculo.getTipo().equals("Motocicletas") || vehiculo.getTipo().equals("Ciclomotores")) {
+            if (vehiculo.getTipo().equals("Bicicleta") || vehiculo.getTipo().equals("Motocicletas")
+                    || vehiculo.getTipo().equals("Ciclomotores")) {
                 pilaVehiculos2Ruedas.push(vehiculo);
             }
         }
 
-        if(pilaVehiculos2Ruedas.isEmpty()) {
+        if (pilaVehiculos2Ruedas.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No hay vehículos de 2 ruedas.");
             return;
         }
@@ -271,7 +283,8 @@ public class ParqueaderoApp extends JFrame {
         while (!pilaVehiculos2Ruedas.isEmpty()) {
             VehicleEntry vehiculo = pilaVehiculos2Ruedas.pop();
             int valor = valueMinute(vehiculo.getTipo());
-            modeloLista.addElement("Placa: " + vehiculo.getPlaca() + " | Tipo: " + vehiculo.getTipo() + " | Valor: $" + valor);
+            modeloLista.addElement(
+                    "Placa: " + vehiculo.getPlaca() + " | Tipo: " + vehiculo.getTipo() + " | Valor: $" + valor);
         }
         mostrarListaVehiculos(modeloLista, "Vehículos de 2 Ruedas");
     }
@@ -279,24 +292,25 @@ public class ParqueaderoApp extends JFrame {
     private void FourWheelsVehicles() {
         Stack<VehicleEntry> pilaVehiculos4Ruedas = new Stack<>();
         DefaultListModel<String> modeloLista = new DefaultListModel<>();
-    
+
         for (VehicleEntry vehiculo : vehiculos) {
             if (vehiculo.getTipo().equals("Carros")) {
                 pilaVehiculos4Ruedas.push(vehiculo);
             }
         }
 
-        if(pilaVehiculos4Ruedas.isEmpty()) {
+        if (pilaVehiculos4Ruedas.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No hay vehículos de 4 ruedas.");
             return;
         }
-    
+
         while (!pilaVehiculos4Ruedas.isEmpty()) {
             VehicleEntry vehiculo = pilaVehiculos4Ruedas.pop();
             int valor = valueMinute(vehiculo.getTipo());
-            modeloLista.addElement("Placa: " + vehiculo.getPlaca() + " | Tipo: " + vehiculo.getTipo() + " | Valor: $" + valor);
+            modeloLista.addElement(
+                    "Placa: " + vehiculo.getPlaca() + " | Tipo: " + vehiculo.getTipo() + " | Valor: $" + valor);
         }
-    
+
         mostrarListaVehiculos(modeloLista, "Vehículos de 4 Ruedas");
     }
 
@@ -304,8 +318,61 @@ public class ParqueaderoApp extends JFrame {
         JList<String> listaVehiculos = new JList<>(modeloLista);
         JScrollPane scrollPane = new JScrollPane(listaVehiculos);
 
-        JOptionPane.showMessageDialog(this, scrollPane, titulo,
-                JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, scrollPane, titulo, JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void parking() {
+        int totalParking = vehiculos.size();
+        if (!vehiculos.isEmpty()) {
+            for (VehicleEntry vehiculo : vehiculos) {
+                park += valueMinute(vehiculo.getTipo());
+            }
+            JOptionPane.showMessageDialog(this, "Total a pagar: $" + park + "\nTotal vehículos: " + totalParking);
+        } else {
+            JOptionPane.showMessageDialog(this, "No hay vehiculos en el parqueadero",
+                    "Information", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+    }
+
+    private void eliminateVehiculo() {
+        String placa = JOptionPane.showInputDialog(this, "Ingrese la placa del vehículo a eliminar:");
+
+        if (placa == null || placa.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Placa no válida.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        VehicleEntry vehiculoAEliminar = null;
+        for (VehicleEntry vehiculo : vehiculos) {
+            if (vehiculo.getPlaca().equalsIgnoreCase(placa)) {
+                vehiculoAEliminar = vehiculo;
+                break;
+            }
+        }
+
+        if (vehiculoAEliminar != null) {
+  
+            vehiculos.remove(vehiculoAEliminar);
+            actualizarTabla();
+
+            park -= valueMinute(vehiculoAEliminar.getTipo());
+
+            JOptionPane.showMessageDialog(this, "Vehículo eliminado exitosamente.", "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "No se encontró ningún vehículo con la placa ingresada.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
+    }
+
+    private void actualizarTabla() {
+        tableModel.setRowCount(0);
+        for (VehicleEntry vehiculo : vehiculos) {
+            tableModel.addRow(new Object[] { vehiculo.getPlaca(), vehiculo.getTipo(), vehiculo.getHora(), turno,
+                    "$" + valueMinute(vehiculo.getTipo()) });
+        }
     }
 
     private int valueMinute(String tipo) {

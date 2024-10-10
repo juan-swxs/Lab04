@@ -1,16 +1,26 @@
 package Exercise02;
 
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.SwingUtilities;
 import Exercise01.ProgramAesthetics.BackgroundPanel;
 import Exercise01.ProgramAesthetics.RoundedPanel;
@@ -19,18 +29,26 @@ public class ParqueaderoApp extends JFrame {
 
     private BackgroundPanel panel;
     private RoundedPanel subpanel;
+    private JPanel panelSettings;
+    private JPanel panelTabla;
+    private CardLayout cardLayout;
     private BackgroundPanel panel3;
     private JTextField ingresar;
-    private JTextField tipoVehiculo;
+    private JComboBox<String> tipoVehiculo;
     private JTextField hora;
     private JButton login;
     private JMenuBar menu;
     private JMenu menuLeading;
+    private JTable table;
+    private DefaultTableModel tableModel;
+    private ArrayList<VehicleEntry> vehiculos;
+    private int turno = 0;
 
     public ParqueaderoApp() {
         setSize(400, 550);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        vehiculos = new ArrayList<>();
         intoComponents();
     }
 
@@ -39,9 +57,14 @@ public class ParqueaderoApp extends JFrame {
         placeInformation();
         placeButton();
         placeMenu();
+        placeTabla();
     }
 
     private void panelMain() {
+        panelSettings = new JPanel();
+        cardLayout = new CardLayout();
+        panelSettings.setLayout(cardLayout);
+
         panel = new BackgroundPanel("Images/FondoMenu.jfif");
         panel.setLayout(null);
 
@@ -56,6 +79,9 @@ public class ParqueaderoApp extends JFrame {
         panel3.setRounded(50, 50);
         panel3.setBounds(0, 0, 260, 190);
 
+        panelTabla = new JPanel();
+        panelTabla.setLayout(null);
+
         JTextArea area = new JTextArea();
         area.setBackground(new Color(0, 9, 16));
         area.setBounds(0, 167, 25, 23);
@@ -68,7 +94,9 @@ public class ParqueaderoApp extends JFrame {
         subpanel.add(area2);
         subpanel.add(panel3);
         panel.add(subpanel);
-        this.getContentPane().add(panel);
+        panelSettings.add(panel, "ingresoDatos");
+        panelSettings.add(panelTabla, "mostrarTabla");
+        this.getContentPane().add(panelSettings);
     }
 
     private void placeInformation() {
@@ -94,23 +122,25 @@ public class ParqueaderoApp extends JFrame {
 
         });
 
-        tipoVehiculo = new JTextField("Ingrese el tipo de vehiculo");
+        tipoVehiculo = new JComboBox<>(new String[] {"Bicicleta", "Ciclomotores","Motocicletas","Carros"});
+        tipoVehiculo.setEditable(true);
         tipoVehiculo.setFont(new Font("arial", Font.TRUETYPE_FONT, 10));
+        tipoVehiculo.getEditor().setItem("Eliga el tipo de vehiculo");
         tipoVehiculo.setBounds(30, 270, 200, 30);
 
         tipoVehiculo.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (tipoVehiculo.getText().equals("Ingrese el tipo de vehiculo")) {
-                    tipoVehiculo.setText("");
+                if (tipoVehiculo.getEditor().getItem().equals("Ingrese el tipo de vehiculo")) {
+                    tipoVehiculo.getEditor().setItem("");
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
 
-                if (tipoVehiculo.getText().isEmpty()) {
-                    tipoVehiculo.setText("Ingrese el tipo de vehiculo");
+                if (tipoVehiculo.getEditor().getItem().equals("")) {
+                    tipoVehiculo.getEditor().setItem("Ingrese el tipo de vehiculo");
                 }
             }
 
@@ -149,6 +179,10 @@ public class ParqueaderoApp extends JFrame {
         login.setBackground(new Color(0, 18, 54));
         login.setForeground(new Color(236, 236, 236, 190));
         login.setBounds(80, 365, 100, 32);
+        login.addActionListener(e -> {
+            turno++;
+            parkingEntrance();
+        });
         subpanel.add(login);
     }
 
@@ -156,7 +190,23 @@ public class ParqueaderoApp extends JFrame {
         menu = new JMenuBar();
         menuLeading = new JMenu("≡ Menu");
         JMenuItem ingresar = new JMenuItem(" ✒ Ingresar");
+        ingresar.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(panelSettings, "ingresoDatos");
+            }
+
+        });
         JMenuItem tabla = new JMenuItem("⛯ Mostrar tabla");
+        tabla.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(panelSettings, "mostrarTabla");
+            }
+
+        });
         JMenuItem vehiculos2 = new JMenuItem("⚬ Vehiculos 2 ruedas");
         JMenuItem vehiculos4 = new JMenuItem("⚬ Vehiculos 4 ruedas");
         JMenuItem parqueadero = new JMenuItem("⚬ Parqueadero");
@@ -173,5 +223,38 @@ public class ParqueaderoApp extends JFrame {
 
         menu.add(menuLeading);
         setJMenuBar(menu);
+    }
+
+    private void placeTabla() {
+        String[] columns = {"Placa", "Tipo", "Hora", "N° Vehiculo", "Valor"};
+        tableModel = new DefaultTableModel(columns, 0);
+        table = new JTable(tableModel);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(10, 0, 365, 400);
+        panelTabla.add(scrollPane);
+    }
+
+    private void parkingEntrance() {
+        String placa = ingresar.getText();
+        String tipoVh = (String) tipoVehiculo.getSelectedItem();
+        String horaEntrada = hora.getText();
+
+        if (placa.equals("Ingresar la placa") || tipoVh.equals("Ingrese el tipo de vehiculo")
+                || horaEntrada.equals("Ingrese la hora 00:00")) {
+
+            JOptionPane.showMessageDialog(this, "Por favor complete todos los campos.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        VehicleEntry vehicle = new VehicleEntry(placa, tipoVh, horaEntrada);
+        vehiculos.add(vehicle);
+
+        if (!vehiculos.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Datos ingresados con éxito", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+        tableModel.addRow(new Object[] {vehicle.getPlaca() ,vehicle.getTipo(), vehicle.getHora(), turno});
     }
 }

@@ -20,6 +20,14 @@ public class RoundedPanel extends JPanel {
         this.arcHeight = arcHeight;
     }
 
+    public int getArcWidth() {
+        return arcWidth;
+    }
+
+    public int getArcHeight() {
+        return arcHeight;
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
 
@@ -32,5 +40,4 @@ public class RoundedPanel extends JPanel {
         g2.dispose();
     }
 
-    
 }

@@ -13,8 +13,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import com.formdev.flatlaf.intellijthemes.FlatCarbonIJTheme;
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatAtomOneDarkIJTheme;
-
 import Exercise01.*;
+import Exercise02.ParqueaderoApp;
 
 public class Main {
 
@@ -53,10 +53,11 @@ public class Main {
                             boton[index].setEnabled(!boton[index].isEnabled());
                             Eps aplication = new Eps();
                             FlatCarbonIJTheme.setup();
+                            UIManager.put("TitlePane.closePressedBackground",Color.LIGHT_GRAY);
                             UIManager.put("TextComponent.arc", 999);
                             UIManager.put("Panel.arc", 999);
-                            UIManager.put("Component.arc", 999);
-                            UIManager.put("Component.focusWidth", 1 );
+                            UIManager.put("Component.arc", 15);
+                            UIManager.put("Component.focusWidth", 1);
                             UIManager.put("Button.arc", 100);
                             UIManager.put("Button.background", new Color(23, 32, 48)); 
                             UIManager.put("Button.pressedBackground", new Color(77,105,159));
@@ -79,7 +80,22 @@ public class Main {
 
                         case 1:
                             boton[index].setEnabled(!boton[index].isEnabled());
-                            
+                            ParqueaderoApp app = new ParqueaderoApp();
+                            FlatAtomOneDarkIJTheme.setup();
+                            UIManager.put("TextComponent.arc", 999);
+                            UIManager.put("Component.borderWidth", 0);
+                            UIManager.put("TextField.background", new Color(0,168,118,140));
+                            UIManager.put("TextField.foreground", new Color(236,236,236,210));
+                            UIManager.put("Button.arc", 100);
+                            UIManager.put("Button.pressedBackground", new Color(77,105,159));
+                            UIManager.put("MenuBar.selectionBackground", new Color(0,108,128,130));
+                            UIManager.put("MenuBar.underlineSelectionHeight", 100);
+                            UIManager.put("MenuBar.underlineSelectionColor",Color.ORANGE);
+                            UIManager.put("MenuBar.selectionArc", 10);
+                            UIManager.put("MenuItem.selectionBackground",new Color(16,162,149,50));
+                            UIManager.put("MenuItem.selectionArc", 10);
+                            SwingUtilities.updateComponentTreeUI(app);
+                            app.setVisible(true);
                             break;
                     }
                 }

@@ -53,13 +53,17 @@ public class Eps extends JFrame {
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         colaShift = new PriorityQueue<>((p1, p2) -> Integer.compare(p2.calcularPrioridad(), p1.calcularPrioridad()));
+        startComponenet();
+    }
+
+    private void startComponenet() {
         mainPanel();
         placeText();
         placeInformation();
         placeButtons();
         placeTable();
     }
-
+    
     private void mainPanel() {
         panel = new JPanel();
         panel.setBackground(Color.WHITE);
@@ -74,7 +78,7 @@ public class Eps extends JFrame {
         animationJLabel = new JLabel(new ImageIcon(imagen));
         animationJLabel.setBounds(19, 20, 32, 32);
 
-        JLabel title = new JLabel("Pedidos");
+        JLabel title = new JLabel("Turnos");
         title.setFont(new Font("serif", Font.ITALIC, 20));
         title.setBounds(60, 26, 100, 20);
 
@@ -171,7 +175,7 @@ public class Eps extends JFrame {
         scroll.setBounds(5, 280, 255, 80);
         panel.add(scroll);
         for (int i = 0; i < columns.length; i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
+            table.getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer(176, 190, 217, 210,255,255,255));
         }
     }
 

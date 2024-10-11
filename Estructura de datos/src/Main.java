@@ -3,6 +3,7 @@ package src;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -104,7 +105,7 @@ public class Main {
                             UIManager.put("Component.arrowType", "chevron");
                             UIManager.put("Component.arc", 20);
                             UIManager.put("List.selectionBackground", new Color(4,166,151,50));
-                            UIManager.put("ScrollBar.showButtons", true );
+                            UIManager.put( "ScrollBar.thumbInsets", new Insets( 2, 2, 2, 2));
                             
                             SwingUtilities.updateComponentTreeUI(app);
                             app.setVisible(true);

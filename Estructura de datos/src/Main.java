@@ -25,6 +25,7 @@ public class Main {
         FlatAtomOneDarkIJTheme.setup();
         UIManager.put("Component.focusWidth", 1);
         UIManager.put("Button.arc", 20);
+        UIManager.put("Button.pressedBackground", new Color(72,77,89));
 
         String titulo = "Lab04: Estructuras de datos";
 
@@ -93,7 +94,7 @@ public class Main {
                             UIManager.put("MenuBar.underlineSelectionColor",Color.ORANGE);
                             UIManager.put("MenuBar.selectionArc", 10);
                             UIManager.put("MenuItem.selectionBackground",new Color(16,162,149,50));
-                            UIManager.put("MenuItem.selectionArc", 10);
+                            UIManager.put("MenuItem.selectionArc", 15);
                             UIManager.put("ComboBox.background",  new Color(0,168,118,160));
                             UIManager.put("ComboBox.foreground", new Color(236,236,236,210));
                             UIManager.put("ComboBox.borderWidth", 0);
@@ -103,7 +104,7 @@ public class Main {
                             UIManager.put("Component.arrowType", "chevron");
                             UIManager.put("Component.arc", 20);
                             UIManager.put("List.selectionBackground", new Color(4,166,151,50));
-                            UIManager.put( "ScrollBar.showButtons", true );
+                            UIManager.put("ScrollBar.showButtons", true );
                             
                             SwingUtilities.updateComponentTreeUI(app);
                             app.setVisible(true);

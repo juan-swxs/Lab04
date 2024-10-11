@@ -96,16 +96,6 @@ public class ParqueaderoApp extends JFrame {
         area2.setBackground(new Color(0, 9, 16));
         area2.setBounds(240, 150, 25, 23);
 
-        JLabel title = new JLabel("Welcome");
-        title.setFont(new Font("Roboto", Font.LAYOUT_NO_START_CONTEXT, 25));
-        title.setForeground(Color.WHITE);
-        title.setBounds(102,15,110,60);
-
-        JLabel subTitle = new JLabel("Lorem insump dolor sit amet consectetuer adipiscing elit.");
-        subTitle.setFont(new Font("Roboto", Font.ITALIC, 6));
-        subTitle.setForeground(Color.WHITE);
-        subTitle.setBounds(80, 49, 300, 30);
-
         placeLabels();
 
         subpanel.add(area);
@@ -119,9 +109,9 @@ public class ParqueaderoApp extends JFrame {
 
     private void placeLabels() {
         JLabel title = new JLabel("Welcome");
-        title.setFont(new Font("Roboto", Font.LAYOUT_NO_START_CONTEXT, 25));
+        title.setFont(new Font("Times new Roman", Font.LAYOUT_NO_START_CONTEXT, 25));
         title.setForeground(Color.WHITE);
-        title.setBounds(102,8,110,60);
+        title.setBounds(108,8,110,60);
 
         JLabel subTitle = new JLabel("Lorem insump dolor sit amet consectetuer adipiscing elit.");
         subTitle.setFont(new Font("Roboto", Font.ITALIC, 6));
@@ -133,10 +123,15 @@ public class ParqueaderoApp extends JFrame {
         subTitle2.setForeground(Color.WHITE);
         subTitle2.setBounds(100, 51, 300, 30);
 
+        JLabel text = new JLabel("VEHICLE LOGIN");
+        text.setFont(new Font("Times new Roman", Font.ROMAN_BASELINE, 14));
+        text.setForeground(new Color(177,207,204));
+        text.setBounds(75, 177, 130, 40);
+
         subpanel.add(title);
         subpanel.add(subTitle);
         subpanel.add(subTitle2);
-
+        subpanel.add(text);
     }
     
 
@@ -325,8 +320,8 @@ public class ParqueaderoApp extends JFrame {
         DefaultListModel<String> modeloLista = new DefaultListModel<>();
 
         for (VehicleEntry vehiculo : vehiculos) {
-            if (vehiculo.getTipo().equals("Bicicleta") || vehiculo.getTipo().equals("Motocicletas")
-                    || vehiculo.getTipo().equals("Ciclomotores")) {
+            if (vehiculo.getTipo().equals("Bicicleta") || vehiculo.getTipo().equals("Motocicleta")
+                    || vehiculo.getTipo().equals("Ciclomotor")) {
                 pilaVehiculos2Ruedas.push(vehiculo);
             }
         }
@@ -336,13 +331,15 @@ public class ParqueaderoApp extends JFrame {
             return;
         }
 
+        int total = 0;
         while (!pilaVehiculos2Ruedas.isEmpty()) {
             VehicleEntry vehiculo = pilaVehiculos2Ruedas.pop();
             int valor = valueMinute(vehiculo.getTipo());
             modeloLista.addElement(
                     "Placa: " + vehiculo.getPlaca() + " | Tipo: " + vehiculo.getTipo() + " | Hora: " + vehiculo.getHora() + " | Valor: $" + valor);
+                    total += valor;
         }
-        mostrarListaVehiculos(modeloLista, "Vehículos de 2 Ruedas");
+        mostrarListaVehiculos(modeloLista, "Vehículos de 2 Ruedas" + " — Total a pagar: $" + total);
     }
 
     private void FourWheelsVehicles() {
@@ -350,7 +347,7 @@ public class ParqueaderoApp extends JFrame {
         DefaultListModel<String> modeloLista = new DefaultListModel<>();
 
         for (VehicleEntry vehiculo : vehiculos) {
-            if (vehiculo.getTipo().equals("Carros")) {
+            if (vehiculo.getTipo().equals("Carro")) {
                 pilaVehiculos4Ruedas.push(vehiculo);
             }
         }
@@ -360,14 +357,16 @@ public class ParqueaderoApp extends JFrame {
             return;
         }
 
+        int total = 0;
         while (!pilaVehiculos4Ruedas.isEmpty()) {
             VehicleEntry vehiculo = pilaVehiculos4Ruedas.pop();
             int valor = valueMinute(vehiculo.getTipo());
             modeloLista.addElement(
                     "Placa: " + vehiculo.getPlaca() + " | Tipo: " + vehiculo.getTipo() + " | Hora: " + vehiculo.getHora() + " | Valor: $" + valor);
+                    total += valor;
         }
 
-        mostrarListaVehiculos(modeloLista, "Vehículos de 4 Ruedas");
+        mostrarListaVehiculos(modeloLista, "Vehículos de 4 Ruedas" + " — Total a pagar: $" + total);
     }
 
     private void mostrarListaVehiculos(DefaultListModel<String> modeloLista, String titulo) {
@@ -461,11 +460,11 @@ public class ParqueaderoApp extends JFrame {
         switch (tipo) {
             case "Bicicleta":
                 return 20;
-            case "Ciclomotores":
+            case "Ciclomotor":
                 return 20;
-            case "Motocicletas":
+            case "Motocicleta":
                 return 30;
-            case "Carros":
+            case "Carro":
                 return 60;
             default:
                 return 0;
